@@ -45,10 +45,12 @@ END
 
 my $xml = sprintf($template,
     URI::file->new_abs($basedir->file(sprintf('theta2fcpx_%d.fcpbundle/', $time->strftime('%Y%m%d%H%M%S')))->absolute),
-    map({sprintf(qq(<asset id="%s" name="%s" src="%s"/>\n), $_->{id}, $_->{name}, URI::file->new_abs($_->{path}->absolute))} @clips),
-    map({sprintf(qq(<asset-clip name="%s" ref="%s"/>\n), $_->{name}, $_->{id})} @clips)
+    join("\n", map({sprintf(qq(<asset id="%s" name="%s" src="%s"/>\n), $_->{id}, $_->{name}, URI::file->new_abs($_->{path}->absolute))} @clips)),
+    join("\n", map({sprintf(qq(<asset-clip name="%s" ref="%s"/>\n), $_->{name}, $_->{id})} @clips))
 );
+warn $xml;
 my $fh = File::Temp->new(SUFFIX => '.fcpxml');
+
 print $fh $xml;
 close $fh;
 my $fcpxml = $fh->filename;
